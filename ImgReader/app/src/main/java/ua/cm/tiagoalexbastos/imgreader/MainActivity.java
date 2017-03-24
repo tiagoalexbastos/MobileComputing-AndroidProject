@@ -1,68 +1,67 @@
 package ua.cm.tiagoalexbastos.imgreader;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Button;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseDatabase mFirebaseInstance;
-
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseDatabase fire_database = FirebaseDatabase.getInstance();
-
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        final List imgs = new ArrayList<String>();
-
-
-        database.child("imagens").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-                    String img = noteDataSnapshot.getValue(String.class);
-                    Log.d("TAG", img);
-                    byte imagem[] = Base64.decode( img, Base64.NO_WRAP | Base64.URL_SAFE);
-
-                    Log.d("TAGBYTE", String.valueOf(imagem));
-                    Bitmap bmp= BitmapFactory.decodeByteArray(imagem,0,imagem.length);
-                    ImageView image= (ImageView) findViewById(R.id.imageView);
-                    image.getLayoutParams().width = 920;
-                    image.getLayoutParams().height = 920;
-                    image.setImageBitmap(bmp);
-                }
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+        Button signOutButton = (Button) findViewById(R.id.sign_out_btn);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                signOut();
             }
         });
 
-//        Log.d("TAG", (String) imgs.get(0));
+        //get firebase auth instance
+        auth = FirebaseAuth.getInstance();
 
-//        byte imagem[] = Base64.decode((String) imgs.get(0), Base64.DEFAULT);
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // user auth state is changed - user is null
+                    // launch login activity
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        };
+    }
 
+
+    //sign out method
+    private void signOut() {
+        auth.signOut();
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            auth.removeAuthStateListener(authListener);
+        }
     }
 }
