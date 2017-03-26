@@ -6,7 +6,6 @@
     tools:context="ua.cm.tiagoalexbastos.imgreader.fragments.MainFragment">
 
     <ImageView
-        android:id="@+id/imageView_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@color/common_google_signin_btn_text_dark_default"

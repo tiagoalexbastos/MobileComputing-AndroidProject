@@ -30,7 +30,6 @@
     <string name="app_bar_name">Spotter</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_new_email">New email</string>
     <string name="new_pass">New Password</string>
     <string name="btn_change_email">Change Email</string>
@@ -39,4 +38,6 @@
     <string name="return_home">Home</string>
     <string name="image_container_descript">Image Container</string>
     <string name="logo_descript">Logo</string>
+    <string name="image_container_recycler_descript">Image Container</string>
+    <string name="full_screen_image_container_descript">Full Screen image container</string>
 </resources>

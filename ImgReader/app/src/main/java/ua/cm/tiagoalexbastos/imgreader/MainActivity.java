@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import ua.cm.tiagoalexbastos.imgreader.firebase.LoginActivity;
 import ua.cm.tiagoalexbastos.imgreader.firebase.fragments.SettingsFragment;
 import ua.cm.tiagoalexbastos.imgreader.fragments.MainFragment;
+import ua.cm.tiagoalexbastos.imgreader.gallery.fragments.GalleryFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -65,11 +66,13 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
             }
         });
+        fab.hide();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //noinspection deprecation
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -107,7 +110,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -131,12 +133,12 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+//        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -149,10 +151,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            viewGalleryFragment();
         } else if (id == R.id.nav_manage) {
             viewSettingsFragment();
-
         } else if (id == R.id.exit_app) {
             auth.signOut();
         } else if (id == R.id.nav_home) {
@@ -162,6 +163,24 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void viewGalleryFragment() {
+        // Create fragment and give it an argument specifying the article it should show
+        GalleryFragment newFragment = new GalleryFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(SettingsFragment.ARG_POSITION, position);
+//        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+// Commit the transaction
+        transaction.commit();
     }
 
     private void viewMainFragment() {
