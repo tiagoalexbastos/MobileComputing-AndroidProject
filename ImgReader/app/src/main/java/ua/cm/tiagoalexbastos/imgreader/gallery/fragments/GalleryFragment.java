@@ -1,16 +1,24 @@
 package ua.cm.tiagoalexbastos.imgreader.gallery.fragments;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +33,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -36,8 +48,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 
+import ua.cm.tiagoalexbastos.imgreader.ImageUtils.Imagem;
+import ua.cm.tiagoalexbastos.imgreader.MainActivity;
 import ua.cm.tiagoalexbastos.imgreader.R;
 import ua.cm.tiagoalexbastos.imgreader.gallery.adapter.GalleryAdapter;
 import ua.cm.tiagoalexbastos.imgreader.ImageUtils.Image;
@@ -58,7 +73,7 @@ public class GalleryFragment extends Fragment {
     @SuppressWarnings("unused")
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference database;
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -80,6 +95,8 @@ public class GalleryFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mAdapter = new GalleryAdapter(getContext(), images);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+
         final RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -88,8 +105,6 @@ public class GalleryFragment extends Fragment {
         FirebaseDatabase fire_database = FirebaseDatabase.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
 
-        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
-        fab.show();
 
         if (!isNetworkAvailable()) {
             File myDir = getActivity().getFilesDir();
@@ -125,12 +140,15 @@ public class GalleryFragment extends Fragment {
 
                 cleanImageFolder();
 
+                sendNotification();
+
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-                    String img = noteDataSnapshot.getValue(String.class);
-                    byte imagem[] = Base64.decode(img, Base64.NO_WRAP | Base64.URL_SAFE);
+                    Imagem img = noteDataSnapshot.getValue(Imagem.class);
+
+                    byte imagem[] = Base64.decode(img.getImagem(), Base64.NO_WRAP | Base64.URL_SAFE);
                     Bitmap bmp = BitmapFactory.decodeByteArray(imagem, 0, imagem.length);
 
-                    saveBitMap(bmp);
+                    saveBitMap(bmp, img.getResultados());
 
                 }
 
@@ -144,21 +162,6 @@ public class GalleryFragment extends Fragment {
         });
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isNetworkAvailable()) {
-                    Snackbar.make(view, "Networn Unavailable! Try later", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else {
-                    mLayoutManager.removeAllViews();
-                    images.clear();
-                    images_bitmaps.clear();
-                    getImagesFromFirebase();
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
 
         recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getContext(), recyclerView, new GalleryAdapter.ClickListener() {
             @Override
@@ -181,9 +184,47 @@ public class GalleryFragment extends Fragment {
             }
         }));
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(getView(), "Networn Unavailable! Try later", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    mLayoutManager.removeAllViews();
+                    cleanImageFolder();
+                    images.clear();
+                    images_bitmaps.clear();
+                    getImagesFromFirebase();
+                }
+            }
+        });
+
 
         return rootView;
     }
+
+    private void sendNotification() {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(getActivity())
+                        .setSmallIcon(R.drawable.logo_small)
+                        .setContentTitle("Spotter")
+                        .setContentText(getString(R.string.photo_available));
+
+        Intent notificationIntent = new Intent(getActivity(),getActivity().getClass());
+
+        PendingIntent contentIntent = PendingIntent.getActivity(getActivity(), 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(contentIntent);
+        builder.setAutoCancel(true);
+        builder.setStyle(new NotificationCompat.InboxStyle());
+
+
+        NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(1, builder.build());
+    }
+
 
     private void fetchDataFromStorage() {
         File myDir = getActivity().getFilesDir();
@@ -232,17 +273,18 @@ public class GalleryFragment extends Fragment {
                 cleanImageFolder();
 
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-                    String img = noteDataSnapshot.getValue(String.class);
-                    byte imagem[] = Base64.decode(img, Base64.NO_WRAP | Base64.URL_SAFE);
+                    Imagem img = noteDataSnapshot.getValue(Imagem.class);
 
+                    byte imagem[] = Base64.decode(img.getImagem(), Base64.NO_WRAP | Base64.URL_SAFE);
                     Bitmap bmp = BitmapFactory.decodeByteArray(imagem, 0, imagem.length);
 
-                    saveBitMap(bmp);
+                    saveBitMap(bmp, img.getResultados());
 
                 }
 
 
                 mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
 
             }
 
@@ -263,10 +305,10 @@ public class GalleryFragment extends Fragment {
 
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void saveBitMap(Bitmap bitmapImage) {
+    private void saveBitMap(Bitmap bitmapImage, String results) {
         // path to /data/data/yourapp/app_data/imageDir
 
-        String filename_ts = getCurrentTimeStamp();
+        String filename_ts = String.valueOf(System.currentTimeMillis());
 
         // Create imageDir
         File myDir = getActivity().getFilesDir();
@@ -297,6 +339,7 @@ public class GalleryFragment extends Fragment {
         Image _imagem = new Image();
         _imagem.setMedium(mypath.getAbsolutePath());
         _imagem.setLarge(mypath.getAbsolutePath());
+        _imagem.setName(results);
         images.add(_imagem);
         images_bitmaps.add(readImageBytes(mypath.getAbsolutePath()));
         image_paths.add(mypath.getAbsolutePath());

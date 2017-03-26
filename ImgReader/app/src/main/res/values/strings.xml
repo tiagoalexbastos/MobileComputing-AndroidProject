@@ -36,4 +36,5 @@
     <string name="logo_descript">Logo</string>
     <string name="image_container_recycler_descript">Image Container</string>
     <string name="full_screen_image_container_descript">Full Screen image container</string>
+    <string name="photo_available">There are some new photos available for you!</string>
 </resources>

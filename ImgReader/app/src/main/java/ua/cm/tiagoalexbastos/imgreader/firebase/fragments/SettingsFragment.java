@@ -39,7 +39,6 @@ public class SettingsFragment extends Fragment {
     private ProgressBar progressBar;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
-    private FloatingActionButton fab;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -56,8 +55,6 @@ public class SettingsFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
 
-        fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
-        fab.setVisibility(View.INVISIBLE);
 
         //get firebase auth instance
         //get current user
@@ -252,7 +249,6 @@ public class SettingsFragment extends Fragment {
         if (authListener != null) {
             auth.removeAuthStateListener(authListener);
         }
-        fab.setVisibility(View.VISIBLE);
     }
 
 
