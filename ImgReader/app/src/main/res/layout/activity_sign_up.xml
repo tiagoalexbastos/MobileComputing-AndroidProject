@@ -17,7 +17,7 @@
             android:layout_width="@dimen/logo_w_h"
             android:layout_height="@dimen/logo_w_h"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/descript_logo"
+            android:contentDescription="@string/description_logo"
             android:layout_marginBottom="30dp"
             android:src="@drawable/logo" />
 

@@ -18,7 +18,7 @@
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
     <string name="slogan">Great Pictures, Great Moments</string>
-    <string name="descript_logo">Logo Image</string>
+    <string name="description_logo">Logo Image</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -26,17 +26,13 @@
     <string name="tools_item">Tools</string>
     <string name="sign_out_item">Sign Out</string>
     <string name="gallery_item">Gallery</string>
-    <string name="import_item">Import</string>
     <string name="app_bar_name">Spotter</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hint_new_email">New email</string>
     <string name="new_pass">New Password</string>
     <string name="btn_change_email">Change Email</string>
     <string name="btn_change_password">Change Password</string>
     <string name="btn_remove">Remove User</string>
-    <string name="return_home">Home</string>
-    <string name="image_container_descript">Image Container</string>
     <string name="logo_descript">Logo</string>
     <string name="image_container_recycler_descript">Image Container</string>
     <string name="full_screen_image_container_descript">Full Screen image container</string>

@@ -66,9 +66,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         return images.size();
     }
 
+    @SuppressWarnings("EmptyMethod")
     public interface ClickListener {
+        @SuppressWarnings("UnusedParameters")
         void onClick(View view, int position);
 
+        @SuppressWarnings("UnusedParameters")
         void onLongClick(View view, int position);
     }
 

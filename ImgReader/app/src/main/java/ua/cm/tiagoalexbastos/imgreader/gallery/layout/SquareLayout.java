@@ -32,6 +32,7 @@ class SquareLayout extends RelativeLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // Set a square layout.
+        //noinspection SuspiciousNameCombination
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 }

@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import ua.cm.tiagoalexbastos.imgreader.firebase.LoginActivity;
 import ua.cm.tiagoalexbastos.imgreader.firebase.fragments.SettingsFragment;
-import ua.cm.tiagoalexbastos.imgreader.fragments.MainFragment;
 import ua.cm.tiagoalexbastos.imgreader.gallery.fragments.GalleryFragment;
 
 
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity
 
         View header = navigationView.getHeaderView(0);
         TextView navdrawerUserName = (TextView) header.findViewById(R.id.textView_navdrawer);
+        //noinspection ConstantConditions
         navdrawerUserName.setText(auth.getCurrentUser().getEmail());
         navdrawerUserName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            MainFragment firstFragment = new MainFragment();
+            GalleryFragment firstFragment = new GalleryFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -148,16 +149,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_gallery) {
             viewGalleryFragment();
         } else if (id == R.id.nav_manage) {
             viewSettingsFragment();
         } else if (id == R.id.exit_app) {
             auth.signOut();
-        } else if (id == R.id.nav_home) {
-            viewMainFragment();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -168,54 +165,33 @@ public class MainActivity extends AppCompatActivity
     private void viewGalleryFragment() {
         // Create fragment and give it an argument specifying the article it should show
         GalleryFragment newFragment = new GalleryFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(SettingsFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack so the user can navigate back
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.main_fragment_container, newFragment);
         transaction.addToBackStack(null);
 
-// Commit the transaction
+        // Commit the transaction
         transaction.commit();
     }
 
-    private void viewMainFragment() {
-        // Create fragment and give it an argument specifying the article it should show
-        MainFragment newFragment = new MainFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(SettingsFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.main_fragment_container, newFragment);
-        transaction.addToBackStack(null);
-
-// Commit the transaction
-        transaction.commit();
-    }
 
     private void viewSettingsFragment() {
         // Create fragment and give it an argument specifying the article it should show
         SettingsFragment newFragment = new SettingsFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(SettingsFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack so the user can navigate back
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.main_fragment_container, newFragment);
         transaction.addToBackStack(null);
 
-// Commit the transaction
+        // Commit the transaction
         transaction.commit();
     }
 

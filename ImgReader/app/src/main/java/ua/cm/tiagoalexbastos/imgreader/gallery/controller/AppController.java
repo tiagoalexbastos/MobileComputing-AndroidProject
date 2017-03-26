@@ -12,6 +12,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+@SuppressWarnings("unused")
 @SuppressLint("Registered")
 public class AppController extends Application {
 
@@ -28,6 +29,7 @@ public class AppController extends Application {
         mInstance = this;
     }
 
+    @SuppressWarnings("unused")
     public static synchronized AppController getInstance() {
         return mInstance;
     }

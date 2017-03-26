@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spotter</string>
+
+
+    <string name="create_account">Criar Conta</string>
+    <string name="email">Email</string>
+    <string name="minimum_password">Password demasiado curta, insira no mínimo 6 caracteres!</string>
+    <string name="auth_failed">Autenticação falhada, insira novamente o e-mail e password.</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_reenterpassword">Reescrever Password</string>
+    <string name="btn_login">ENTRAR</string>
+    <string name="btn_link_to_register">Registe-se no Spotter agora!</string>
+    <string name="btn_link_to_login">Eu já tenho uma conta</string>
+    <string name="btn_forgot_password">Esqueceu-se da sua password</string>
+    <string name="btn_reset_password">Resetar Password</string>
+    <string name="btn_back"><![CDATA[<< Atrás]]></string>
+    <string name="lbl_forgot_password">Esqueceu-se da password?</string>
+    <string name="forgot_password_msg">Apenas precisamos do seu e-mail para lhe enviarmos as instruções de resetar password.</string>
+    <string name="slogan">Great Pictures, Great Moments</string>
+    <string name="description_logo">Logo Image</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="tools_item">Ferramentas</string>
+    <string name="sign_out_item">Sair</string>
+    <string name="gallery_item">Galeria</string>
+    <string name="app_bar_name">Spotter</string>
+
+    <string name="hint_new_email">Novo email</string>
+    <string name="new_pass">Nova Password</string>
+    <string name="btn_change_email">Alterar Email</string>
+    <string name="btn_change_password">Alterar Password</string>
+    <string name="btn_remove">Remover Utilizador</string>
+    <string name="logo_descript">Logo</string>
+    <string name="image_container_recycler_descript">Image Container</string>
+    <string name="full_screen_image_container_descript">Full Screen image container</string>
+</resources>
