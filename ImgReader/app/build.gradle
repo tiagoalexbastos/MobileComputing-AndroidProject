@@ -42,6 +42,9 @@ dependencies {
     //noinspection GradleDependency
     compile 'com.google.android.gms:play-services-drive:9.4.0'
 
+    compile 'com.vdurmont:emoji-java:3.2.0'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

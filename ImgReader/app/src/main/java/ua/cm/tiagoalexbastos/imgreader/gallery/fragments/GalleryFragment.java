@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.vdurmont.emoji.EmojiParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +73,7 @@ public class GalleryFragment extends Fragment {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private ArrayList<String> image_paths;
     private GalleryAdapter mAdapter;
+    private ArrayList<Imagem> imagens;
     @SuppressWarnings("unused")
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference database;
@@ -89,6 +93,7 @@ public class GalleryFragment extends Fragment {
                 false);
 
         images = new ArrayList<>();
+        imagens = new ArrayList<>();
         images_bitmaps = new ArrayList<>();
         image_paths = new ArrayList<>();
 
@@ -140,13 +145,13 @@ public class GalleryFragment extends Fragment {
 
                 cleanImageFolder();
 
-                sendNotification();
-
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                     Imagem img = noteDataSnapshot.getValue(Imagem.class);
 
                     byte imagem[] = Base64.decode(img.getImagem(), Base64.NO_WRAP | Base64.URL_SAFE);
                     Bitmap bmp = BitmapFactory.decodeByteArray(imagem, 0, imagem.length);
+
+                    imagens.add(img);
 
                     saveBitMap(bmp, img.getResultados());
 
@@ -180,8 +185,43 @@ public class GalleryFragment extends Fragment {
             }
 
             @Override
-            public void onLongClick(View view, int position) {
+            public void onLongClick(View view, final int position) {
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Delete Picture")
+                        .setMessage("Are you sure you want to delete this picture?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                database.child("imagens").orderByChild("imagem").equalTo(String.valueOf(imagens.get(position).getImagem()))
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.hasChildren()) {
+                                                    DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+                                                    firstChild.getRef().removeValue();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                mAdapter.notifyDataSetChanged();                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(R.drawable.alert_icon)
+                        .show();
+
+
+
             }
+
         }));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -194,6 +234,7 @@ public class GalleryFragment extends Fragment {
                     mLayoutManager.removeAllViews();
                     cleanImageFolder();
                     images.clear();
+                    imagens.clear();
                     images_bitmaps.clear();
                     getImagesFromFirebase();
                 }
@@ -252,6 +293,7 @@ public class GalleryFragment extends Fragment {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void cleanImageFolder() {
         images.clear();
+        imagens.clear();
         images_bitmaps.clear();
         image_paths.clear();
         File myDir = getActivity().getFilesDir();
@@ -277,6 +319,8 @@ public class GalleryFragment extends Fragment {
 
                     byte imagem[] = Base64.decode(img.getImagem(), Base64.NO_WRAP | Base64.URL_SAFE);
                     Bitmap bmp = BitmapFactory.decodeByteArray(imagem, 0, imagem.length);
+
+                    imagens.add(img);
 
                     saveBitMap(bmp, img.getResultados());
 
@@ -339,10 +383,49 @@ public class GalleryFragment extends Fragment {
         Image _imagem = new Image();
         _imagem.setMedium(mypath.getAbsolutePath());
         _imagem.setLarge(mypath.getAbsolutePath());
-        _imagem.setName(results);
+        _imagem.setName(extractResults(results));
         images.add(_imagem);
         images_bitmaps.add(readImageBytes(mypath.getAbsolutePath()));
         image_paths.add(mypath.getAbsolutePath());
+    }
+
+    private String extractResults(String results) {
+        String ret = results;
+
+        if(ret == null) {
+            ret = "Failed to classify the current image :cry: ";
+            ret = EmojiParser.parseToUnicode(ret);
+            return ret;
+        }
+        ret = ret.replace("[", "");
+        ret = ret.replace("]", "");
+        ret = ret.replace("%", "");
+        ret = ret.replace("(", "");
+        ret = ret.replace(")", "");
+        ret = ret.replace(".", "");
+        ret = ret.replaceAll("\\d","");
+
+        if (ret.isEmpty()) {
+            ret = "Failed to classify the current image :cry: ";
+            ret = EmojiParser.parseToUnicode(ret);
+            return ret;
+        }
+
+        if(ret.contains("mask")){
+            ret = ret + " :mask:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+        if(ret.contains("toilet")){
+            ret = ret + " :toilet:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+        if(ret.contains("clock")){
+            ret = ret + ":clock1:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+
+
+        return ret;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
