@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.Manifest.permission.CAMERA;
@@ -81,6 +83,10 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
     private ButtonInputDriver mButtonDriver;
     private Gpio mReadyLED;
 
+    private final int interval = 10000; // 1 Second
+    private Handler mHandler;
+
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +109,11 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
         } else {
             requestPermission();
         }
+
+        mHandler = new Handler();
+
     }
+
 
     private void init() {
         initPIO();
@@ -113,6 +123,19 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
         mBackgroundHandler.post(mInitializeOnBackground);
     }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                mCameraHandler.takePicture();
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, interval);
+            }
+        }
+    };
 
     private void initPIO() {
         PeripheralManagerService service = new PeripheralManagerService();
@@ -173,11 +196,22 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
                     ImageClassifierActivity.this, mBackgroundHandler,
                     ImageClassifierActivity.this);
 
+            startRepeatingTask();
+
+
             mTensorFlowClassifier = new TensorFlowImageClassifier(ImageClassifierActivity.this);
 
             setReady(true);
         }
     };
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
+    }
 
     private Runnable mBackgroundClickHandler = new Runnable() {
         @Override
@@ -259,9 +293,8 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
         } else {
             // if theres no TTS, we don't need to wait until the utterance is spoken, so we set
             // to ready right away.
-           setReady(true);
+            setReady(true);
         }
-
 
 
         runOnUiThread(new Runnable() {
@@ -331,6 +364,9 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
             mTtsEngine.stop();
             mTtsEngine.shutdown();
         }
+
+        stopRepeatingTask();
+
     }
 
     // Permission-related methods. This is not needed for Android Things, where permissions are
@@ -338,7 +374,7 @@ public class ImageClassifierActivity extends Activity implements ImageReader.OnI
     // regular Android device.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0

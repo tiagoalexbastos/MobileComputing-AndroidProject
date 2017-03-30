@@ -45,6 +45,8 @@ dependencies {
     compile 'com.vdurmont:emoji-java:3.2.0'
 
 
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

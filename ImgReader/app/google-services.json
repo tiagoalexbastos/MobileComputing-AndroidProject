@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184209776007:android:4f07b2fb8c4ffde8",
+        "mobilesdk_app_id": "1:184209776007:android:76ab0c84263f2ef5",
         "android_client_info": {
-          "package_name": "com.example.androidthings.doorbell"
+          "package_name": "ua.cm.tiagoalexbastos.imgreader"
         }
       },
       "oauth_client": [
@@ -39,9 +39,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184209776007:android:76ab0c84263f2ef5",
+        "mobilesdk_app_id": "1:184209776007:android:9d99916ba6091158",
         "android_client_info": {
-          "package_name": "ua.cm.tiagoalexbastos.imgreader"
+          "package_name": "com.example.androidthings.imageclassifier"
         }
       },
       "oauth_client": [

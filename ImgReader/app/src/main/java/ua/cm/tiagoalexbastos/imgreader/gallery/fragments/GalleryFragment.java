@@ -138,7 +138,6 @@ public class GalleryFragment extends Fragment {
 
 
 
-
         database.child("imagens").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -165,6 +164,7 @@ public class GalleryFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
 
 
 
@@ -230,6 +230,7 @@ public class GalleryFragment extends Fragment {
                 if (!isNetworkAvailable()) {
                     Snackbar.make(getView(), "Networn Unavailable! Try later", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 } else {
                     mLayoutManager.removeAllViews();
                     cleanImageFolder();
@@ -338,6 +339,17 @@ public class GalleryFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        database.goOffline();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        database.goOnline();
+    }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isNetworkAvailable() {
@@ -420,7 +432,19 @@ public class GalleryFragment extends Fragment {
             ret = EmojiParser.parseToUnicode(ret);
         }
         if(ret.contains("clock")){
-            ret = ret + ":clock1:";
+            ret = ret + " :clock1:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+        if(ret.contains("hammer")){
+            ret = ret + " :hammer_and_wrench:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+        if(ret.contains("car")){
+            ret = ret + " :car:";
+            ret = EmojiParser.parseToUnicode(ret);
+        }
+        if(ret.contains("fish")){
+            ret = ret + " :tropical_fish:";
             ret = EmojiParser.parseToUnicode(ret);
         }
 
