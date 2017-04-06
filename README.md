@@ -4,4 +4,5 @@
 ### CM Project - Android Module ###
 
 ## Login ##
-* To login in the application the user must get registered on Spotter!
+* First, get registered on Spotter!
+* Second, enjoy your pictures!
