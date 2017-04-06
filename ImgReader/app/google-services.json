@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "184209776007",
+    "firebase_url": "https://doorbell-master-a4d3b.firebaseio.com",
+    "project_id": "doorbell-master-a4d3b",
+    "storage_bucket": "doorbell-master-a4d3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184209776007:android:76ab0c84263f2ef5",
+        "android_client_info": {
+          "package_name": "ua.cm.tiagoalexbastos.imgreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184209776007-jgku40lh4iju22fqip7frjfebs19cemj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcQYiYrtVfGZFtgL0BpOBSh26qJvrwO8g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184209776007:android:9d99916ba6091158",
+        "android_client_info": {
+          "package_name": "com.example.androidthings.imageclassifier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184209776007-jgku40lh4iju22fqip7frjfebs19cemj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcQYiYrtVfGZFtgL0BpOBSh26qJvrwO8g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
